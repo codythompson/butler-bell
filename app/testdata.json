@@ -1,0 +1,33 @@
+{
+  "data": {
+    "bells": [
+      {
+        "name": "beer",
+        "rings": []
+      },
+      {
+        "name": "snacks",
+        "rings": []
+      },
+      {
+        "name": "tea",
+        "rings": [
+          1562053573237,
+          1562053574265
+        ]
+      },
+      {
+        "name": "hmm",
+        "rings": []
+      },
+      {
+        "name": "hmm",
+        "rings": []
+      },
+      {
+        "name": "oh no",
+        "rings": []
+      }
+    ]
+  }
+}
