@@ -1,10 +1,11 @@
 import React from 'react'
 
-const BELL_CLASSNAME = 'bell';
+import styles from './Bell.module.scss'
+
 
 export default function ({name}) {
   return (
-    <div className={BELL_CLASSNAME}>
+    <div className={styles.img}>
       <img ></img>
       <h2>{name}</h2>
     </div>
