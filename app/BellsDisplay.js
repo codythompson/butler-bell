@@ -1,10 +1,14 @@
 import React from 'react'
+import classNames from 'classnames'
 
 import Bell from './Bell'
 
-export default function ({bells}) {
+import styles from './BellsDisplay.module.scss'
+
+export default function ({className, bells}) {
+
   return (
-    <div>
+    <div className={classNames(className, styles.BellsDisplay)}>
       {
         bells.map((bell, i) => <Bell key={i} {...bell}></Bell>)
       }

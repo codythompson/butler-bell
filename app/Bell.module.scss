@@ -1,5 +1,26 @@
-.img {
-  background: red;
-  width: 100px;
-  height: 100px;
+.Bell {
+  box-sizing: border-box;
+  padding: 2%;
+  height: 50%;
+  width: 25%;
+}
+
+.BellImg {
+  display: block;
+  background: slategrey;
+  max-width: 100%;
+  max-height: 70%;
+  margin: auto;
+}
+
+.BellName {
+  text-align: center;
+  max-height: 30%;
+}
+
+@media (max-aspect-ratio: 1/1) {
+  .Bell {
+    height: 33%;
+    width: auto;
+  }
 }
