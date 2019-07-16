@@ -24,3 +24,19 @@
     width: auto;
   }
 }
+
+.Bell.requested {
+  background: red;
+}
+
+.Bell.inProgress {
+  background: yellow;
+}
+
+.Bell.onHold {
+  background: lightgrey;
+}
+
+.Bell.fulfilled {
+  background: green;
+}
