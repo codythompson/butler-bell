@@ -5,12 +5,12 @@ import Bell from './Bell'
 
 import styles from './BellsDisplay.module.scss'
 
-export default function ({className, bells}) {
+export default function ({className, bells, pendingBells, onRing=null}) {
 
   return (
     <div className={classNames(className, styles.BellsDisplay)}>
       {
-        bells.map((bell, i) => <Bell key={i} {...bell}></Bell>)
+        bells.map((bell, i) => <Bell key={i} isPending={pendingBells[bell.name]} onRing={onRing} {...bell}></Bell>)
       }
     </div>
   )
