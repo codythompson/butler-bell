@@ -30,7 +30,7 @@ class App extends React.Component {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: '{"query":"query { serverTime bells { name rings }}"}'
+      body: '{"query":"query { serverTime bells { name description doteRequest { events { type timestamp } } } }"}'
     })
       // TODO - also look at status code
       .then(res => res.json())
