@@ -1,11 +1,11 @@
 import React from 'react'
 import classNames from 'classnames'
 
-import { getLastBellEventType } from './Utils'
+import { getLastBellEventType } from '../Utils'
 
-import styles from './Bell.module.scss'
-import BellImage from '../assets/bell_a.jpg'
-// import BellImage from '../assets/bell_test.jpg'
+import styles from '../styles/Bell.module.scss'
+import BellImage from '../../assets/bell_a.jpg'
+// import BellImage from '../../assets/bell_test.jpg'
 
 export default function ({name, doteRequest=null, isPending=false, onRing=null}) {
   let lastEventType = getLastBellEventType(doteRequest);

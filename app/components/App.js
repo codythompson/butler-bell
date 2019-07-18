@@ -1,10 +1,10 @@
 import React from "react"
 import find from 'lodash/find'
 
-import { getLastBellEventType } from './Utils'
+import { getLastBellEventType } from '../Utils'
 import BellsDisplay from './BellsDisplay'
 
-import styles from './App.module.scss'
+import styles from '../styles/App.module.scss'
 
 class App extends React.Component {
 

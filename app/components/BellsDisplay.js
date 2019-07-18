@@ -3,7 +3,7 @@ import classNames from 'classnames'
 
 import Bell from './Bell'
 
-import styles from './BellsDisplay.module.scss'
+import styles from '../styles/BellsDisplay.module.scss'
 
 export default function ({className, bells, pendingBells, onRing=null}) {
 
