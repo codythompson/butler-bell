@@ -3,8 +3,10 @@ import find from 'lodash/find'
 
 import { getLastBellEventType } from '../Utils'
 import BellsDisplay from './BellsDisplay'
+import DoteOverlay from './DoteOverlay'
 
 import styles from '../styles/App.module.scss'
+import themeStyles from '../styles/themes/themes.module.scss'
 
 class App extends React.Component {
 
@@ -14,7 +16,8 @@ class App extends React.Component {
     this.state = {
       errorMessage: null,
       data: null,
-      pendingBells: {}
+      pendingBells: {},
+      activeDoteRequest: null
     };
 
     this.requestData = this.requestData.bind(this);
@@ -68,26 +71,27 @@ class App extends React.Component {
       return
     }
     if (getLastBellEventType(bell.doteRequest) !== null) {
-      // TODO remove this log and do something better
-      console.log('bell already has event');
-      return;
+      this.setState({activeDoteRequest: bell.doteRequest})
+    } else {
+      const pendingBells = this.state;
+      this.setState({pendingBells: {[bellName]: true, ...pendingBells}});
+      this.sendDoteEvent(bellName, 'requested')
+        .then(res => res.json())
+        .then(json => console.warn('TODO: error handling', json))
+        .then(this.requestData)
     }
-
-    const pendingBells = this.state;
-    this.setState({pendingBells: {[bellName]: true, ...pendingBells}});
-    this.sendDoteEvent(bellName, 'requested')
-      .then(res => res.json())
-      .then(json => console.warn('TODO: error handling', json))
-      .then(this.requestData)
   }
 
   render () {
-    const {data, pendingBells, errorMessage} = this.state;
+    const {data, pendingBells, errorMessage, activeDoteRequest} = this.state;
     if (errorMessage) {
       return <div>ERROR! Go find your butler!</div>
     } else if (data !== null) {
       return (
-        <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} />
+        <div className={themeStyles.theme_princessAndThePea}>
+          <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} />
+          {activeDoteRequest !== null? <DoteOverlay doteRequest={activeDoteRequest}/> : null}
+        </div>
       )
     } else {
       return (

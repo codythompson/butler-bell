@@ -1,0 +1,50 @@
+/*
+ * https://colorhunt.co/palette/123915
+ */
+
+.theme_princessAndThePea {
+  $primary: #fff6f6;
+  $secondary: #ffe5ab;
+  $tertiary: #a1c45a;
+  $quaternary: #ffcdb5;
+
+  .primary_background {
+    background: $primary;
+  }
+  .primary_color {
+    color: $primary;
+  }
+  .primary_borderColor {
+    border-color: $primary;
+  }
+
+  .secondary_background {
+    background: $secondary;
+  }
+  .secondary_color {
+    color: $secondary;
+  }
+  .secondary_borderColor {
+    border-color: $secondary;
+  }
+
+  .tertiary_background {
+    background: $tertiary;
+  }
+  .tertiary_color {
+    color: $tertiary;
+  }
+  .tertiary_borderColor {
+    border-color: $tertiary;
+  }
+
+  .quaternary_background {
+    background: $quaternary;
+  }
+  .quaternary_color {
+    color: $quaternary;
+  }
+  .quaternary_borderColor {
+    border-color: $quaternary;
+  }
+}
