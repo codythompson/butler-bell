@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from  'classnames'
 
 import { getLastBellEventType } from '../Utils'
-import doteEventIfno from '../doteEventInfo.json'
+import doteEventInfo from '../doteEventInfo.json'
 
 import styles from '../styles/DoteOverlay.module.scss'
 import themeStyles from '../styles/themes/themes.module.scss'
@@ -28,18 +28,25 @@ class DoteOverlay extends React.Component {
   }
 
   makeButton (buttonEventType, lastEventType) {
-    const { postfix, buttonLabel } = doteEventIfno[buttonEventType]
+    const { postfix, buttonLabel } = doteEventInfo[buttonEventType]
     return lastEventType === buttonEventType? null: <button type="button" className={classNames('btn', `btn-${postfix}`)} onClick={this.clickHandlers[buttonEventType]}>{buttonLabel}</button>
   }
 
   render() {
-    const { doteRequest } = this.props;
-    const lastEventType = getLastBellEventType(doteRequest)
-    const {postfix, statusText} = doteEventIfno[lastEventType]
+    const { bell, onClose } = this.props;
+    const lastEventType = getLastBellEventType(bell.doteRequest)
+    const {postfix, statusText} = doteEventInfo[lastEventType]
 
     return (
       <div className={styles.DoteOverlayContainer}>
         <div className={classNames(styles.DoteOverlay, themeStyles.secondaryBackground, themeStyles.tertiary_color, themeStyles.quaternary_borderColor)}>
+          <div className={'container-fluid'}>
+            <div className={'row'}>
+              <h1 className={classNames(styles.h1, 'col-10')}>{bell.name}</h1>
+              <button type="button" className={classNames(styles.CloseButton, 'col-2 close')} onClick={onClose}>&times;</button>
+            </div>
+          </div>
+          <hr/>
           <h2 className={styles.h2}>Dote Status</h2>
             <div className={classNames('alert', `alert-${postfix}`)}>
               <strong>{lastEventType}</strong>
@@ -66,8 +73,9 @@ class DoteOverlay extends React.Component {
 }
 
 DoteOverlay.propTypes = {
-  doteRequest: PropTypes.object.isRequired,
-  onEventClick: PropTypes.func
+  bell: PropTypes.object.isRequired,
+  onEventClick: PropTypes.func,
+  onClose: PropTypes.func
 }
 
 export default DoteOverlay

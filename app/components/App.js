@@ -19,8 +19,7 @@ class App extends React.Component {
       errorMessage: null,
       data: null,
       pendingBells: {},
-      activeDoteRequest: null,
-      activeDoteBellName: null,
+      activeBell: null,
       activeDialogInfo: null,
       onDialogConfirm: null
     };
@@ -30,6 +29,7 @@ class App extends React.Component {
     this.handleDoteEventClick = this.handleDoteEventClick.bind(this)
     this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
+    this.handleDoteRequestClose = this.handleDoteRequestClose.bind(this)
   }
 
   componentDidMount () {
@@ -39,9 +39,6 @@ class App extends React.Component {
   }
 
   requestData () {
-    this.setState({
-      data: null
-    })
     return fetch(this.server, {
       method: 'POST',
       headers: {
@@ -52,13 +49,22 @@ class App extends React.Component {
     })
       // TODO - also look at status code
       .then(res => res.json())
-      .then(data => this.setState({data: data.data, pendingBells: {}}))
+      .then((data) => {
+        let { activeBell } = this.state
+        if (activeBell !== null) {
+          activeBell = find(data.data.bells, {name: activeBell.name})
+          if (!activeBell.doteRequest) {
+            activeBell = null
+          }
+        }
+        this.setState({data: data.data, activeBell, pendingBells: {}}
+      )})
       .catch(e => this.setState({errorMessage: ''+e, pendingBells: {}}))
   }
 
   sendDoteEvent(bellName, type) {
     this.setState({
-      data: null
+      pendingBells: {[bellName]: true}
     })
     return fetch(this.server, {
       method: 'POST',
@@ -86,11 +92,10 @@ class App extends React.Component {
     }
     if (getLastBellEventType(bell.doteRequest) !== null) {
       this.setState({
-        activeDoteRequest: bell.doteRequest,
-        activeDoteBellName: bellName
+        activeBell: bell,
       })
     } else {
-      const pendingBells = this.state;
+      const { pendingBells } = this.state;
       this.setState({pendingBells: {[bellName]: true, ...pendingBells}});
       this.sendDoteEvent(bellName, 'requested')
     }
@@ -111,26 +116,27 @@ class App extends React.Component {
 
   handleDoteEventClick(eventType) {
     const { confirmDialog } = doteEventInfo[eventType]
-    const { activeDoteBellName } = this.state
+    const bellName = this.state.activeBell.name
     if (confirmDialog) {
       this.setState({
         activeDialogInfo: confirmDialog,
         onDialogConfirm: () => {
-          this.setState({
-            activeDoteRequest: null,
-            activeDoteBellName: null
-          })
-          this.sendDoteEvent(activeDoteBellName, eventType)
+          // this.setState({
+          //   activeBell: null
+          // })
+          this.sendDoteEvent(bellName, eventType)
         }
       })
     } else {
-      const { activeDoteBellName } = this.state
-      this.setState({
-        activeDoteRequest: null,
-        activeDoteBellName: null
-      })
-      this.sendDoteEvent(activeDoteBellName, eventType)
+      // this.setState({
+      //   activeBell: null
+      // })
+      this.sendDoteEvent(bellName, eventType)
     }
+  }
+
+  handleDoteRequestClose() {
+    this.setState({activeBell: null})
   }
 
   render () {
@@ -138,7 +144,7 @@ class App extends React.Component {
       data,
       pendingBells,
       errorMessage,
-      activeDoteRequest,
+      activeBell,
       activeDialogInfo
     } = this.state;
 
@@ -148,7 +154,12 @@ class App extends React.Component {
       return (
         <div className={themeStyles.theme_princessAndThePea}>
           <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} />
-          {activeDoteRequest !== null? <DoteOverlay doteRequest={activeDoteRequest} onEventClick={this.handleDoteEventClick}/> : null}
+          {activeBell !== null? (
+            <DoteOverlay
+              bell={activeBell}
+              onEventClick={this.handleDoteEventClick}
+              onClose={this.handleDoteRequestClose} />
+          ): null}
           {activeDialogInfo !== null?(
             <Dialog
               titleText={activeDialogInfo.titleText}
