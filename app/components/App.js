@@ -4,6 +4,8 @@ import find from 'lodash/find'
 import { getLastBellEventType } from '../Utils'
 import BellsDisplay from './BellsDisplay'
 import DoteOverlay from './DoteOverlay'
+import Dialog from './Dialog'
+import doteEventInfo from '../doteEventInfo.json'
 
 import styles from '../styles/App.module.scss'
 import themeStyles from '../styles/themes/themes.module.scss'
@@ -17,11 +19,17 @@ class App extends React.Component {
       errorMessage: null,
       data: null,
       pendingBells: {},
-      activeDoteRequest: null
+      activeDoteRequest: null,
+      activeDoteBellName: null,
+      activeDialogInfo: null,
+      onDialogConfirm: null
     };
 
-    this.requestData = this.requestData.bind(this);
-    this.handleBellClick = this.handleBellClick.bind(this);
+    this.requestData = this.requestData.bind(this)
+    this.handleBellClick = this.handleBellClick.bind(this)
+    this.handleDoteEventClick = this.handleDoteEventClick.bind(this)
+    this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
+    this.handleDialogCancel = this.handleDialogCancel.bind(this)
   }
 
   componentDidMount () {
@@ -31,7 +39,9 @@ class App extends React.Component {
   }
 
   requestData () {
-    console.log('REQ DATA')
+    this.setState({
+      data: null
+    })
     return fetch(this.server, {
       method: 'POST',
       headers: {
@@ -47,8 +57,9 @@ class App extends React.Component {
   }
 
   sendDoteEvent(bellName, type) {
-    const dbody = `{"query":"mutation { doteEvent(bellName:"${bellName}",type:${type}) { type, timestamp } }"}`;
-    console.log(dbody)
+    this.setState({
+      data: null
+    })
     return fetch(this.server, {
       method: 'POST',
       headers: {
@@ -57,6 +68,9 @@ class App extends React.Component {
       },
       body: `{"query":"mutation { doteEvent(bellName:\\"${bellName}\\",type:${type}) { type, timestamp } }"}`
     })
+    .then(res => res.json())
+    .then(json => console.warn('TODO: error handling', json))
+    .then(this.requestData)
   }
 
   getBellByName(bellName) {
@@ -71,26 +85,79 @@ class App extends React.Component {
       return
     }
     if (getLastBellEventType(bell.doteRequest) !== null) {
-      this.setState({activeDoteRequest: bell.doteRequest})
+      this.setState({
+        activeDoteRequest: bell.doteRequest,
+        activeDoteBellName: bellName
+      })
     } else {
       const pendingBells = this.state;
       this.setState({pendingBells: {[bellName]: true, ...pendingBells}});
       this.sendDoteEvent(bellName, 'requested')
-        .then(res => res.json())
-        .then(json => console.warn('TODO: error handling', json))
-        .then(this.requestData)
+    }
+  }
+
+  handleDialogConfirm() {
+    const { onDialogConfirm } = this.state
+    this.handleDialogCancel()
+    onDialogConfirm()
+  }
+
+  handleDialogCancel() {
+    this.setState({
+      activeDialogInfo: null,
+      onDialogConfirm: null
+    })
+  }
+
+  handleDoteEventClick(eventType) {
+    const { confirmDialog } = doteEventInfo[eventType]
+    const { activeDoteBellName } = this.state
+    if (confirmDialog) {
+      this.setState({
+        activeDialogInfo: confirmDialog,
+        onDialogConfirm: () => {
+          this.setState({
+            activeDoteRequest: null,
+            activeDoteBellName: null
+          })
+          this.sendDoteEvent(activeDoteBellName, eventType)
+        }
+      })
+    } else {
+      const { activeDoteBellName } = this.state
+      this.setState({
+        activeDoteRequest: null,
+        activeDoteBellName: null
+      })
+      this.sendDoteEvent(activeDoteBellName, eventType)
     }
   }
 
   render () {
-    const {data, pendingBells, errorMessage, activeDoteRequest} = this.state;
+    const {
+      data,
+      pendingBells,
+      errorMessage,
+      activeDoteRequest,
+      activeDialogInfo
+    } = this.state;
+
     if (errorMessage) {
       return <div>ERROR! Go find your butler!</div>
     } else if (data !== null) {
       return (
         <div className={themeStyles.theme_princessAndThePea}>
           <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} />
-          {activeDoteRequest !== null? <DoteOverlay doteRequest={activeDoteRequest}/> : null}
+          {activeDoteRequest !== null? <DoteOverlay doteRequest={activeDoteRequest} onEventClick={this.handleDoteEventClick}/> : null}
+          {activeDialogInfo !== null?(
+            <Dialog
+              titleText={activeDialogInfo.titleText}
+              bodyText={activeDialogInfo.bodyText}
+              cancelText={activeDialogInfo.cancelText}
+              confirmText={activeDialogInfo.confirmText}
+              onCancel={this.handleDialogCancel}
+              onConfirm={this.handleDialogConfirm} />
+          ): null}
         </div>
       )
     } else {
