@@ -90,15 +90,15 @@ class App extends React.Component {
       console.error('bell not found: ', bellName)
       return
     }
-    if (getLastBellEventType(bell.doteRequest) !== null) {
+    // if (getLastBellEventType(bell.doteRequest) !== null) {
       this.setState({
         activeBell: bell,
       })
-    } else {
-      const { pendingBells } = this.state;
-      this.setState({pendingBells: {[bellName]: true, ...pendingBells}});
-      this.sendDoteEvent(bellName, 'requested')
-    }
+    // } else {
+    //   const { pendingBells } = this.state;
+    //   this.setState({pendingBells: {[bellName]: true, ...pendingBells}});
+    //   this.sendDoteEvent(bellName, 'requested')
+    // }
   }
 
   handleDialogConfirm() {

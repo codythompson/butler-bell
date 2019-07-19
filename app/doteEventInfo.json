@@ -1,7 +1,7 @@
 {
   "requested": {
     "postfix": "warning",
-    "buttonLabel": "set to requested",
+    "buttonLabel": "re-request dote",
     "statusText": "Your dote has been requested, but not yet received by your butler. Most embarassing..."
   },
   "onHold": {
@@ -11,12 +11,12 @@
   },
   "inProgress": {
     "postfix": "success",
-    "buttonLabel": "start progress",
+    "buttonLabel": "progress started",
     "statusText": "Your butler is working hard on your dote!"
   },
   "fulfilled": {
     "postfix": "info",
-    "buttonLabel": "fulfill",
+    "buttonLabel": "fulfilled",
     "statusText": "Your butler thinks he already completed this dote. What a noodle!",
     "confirmDialog": {
       "titleText": "Is it really done?",

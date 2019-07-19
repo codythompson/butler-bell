@@ -4,6 +4,7 @@ import classNames from  'classnames'
 
 import { getLastBellEventType } from '../Utils'
 import doteEventInfo from '../doteEventInfo.json'
+import DoteNote from './DoteNote'
 
 import styles from '../styles/DoteOverlay.module.scss'
 import themeStyles from '../styles/themes/themes.module.scss'
@@ -32,10 +33,44 @@ class DoteOverlay extends React.Component {
     return lastEventType === buttonEventType? null: <button type="button" className={classNames('btn', `btn-${postfix}`)} onClick={this.clickHandlers[buttonEventType]}>{buttonLabel}</button>
   }
 
+  makeButtons(lastEventType) {
+    if (lastEventType === null) {
+      return <button type="button" className={classNames('btn', 'btn-success')} onClick={this.clickHandlers.requested}>Ring Dote Bell!</button>
+    } {
+      return (
+        <div className={classNames('', 'btn-group')}>
+          {this.makeButton('onHold', lastEventType)}
+          {this.makeButton('requested', lastEventType)}
+          {this.makeButton('inProgress', lastEventType)}
+          {this.makeButton('fulfilled', lastEventType)}
+        </div>
+      )
+    }
+  }
+
+  makeStatus(lastEventType) {
+    if (lastEventType === null) {
+      return (
+        <div className={classNames('alert', 'alert-light')}>
+          <p>No dotes of this kind requested.</p>
+          <p><strong>Ring the bell?</strong></p>
+          <p>Press the button below to request your butler come to your service at once.</p>
+        </div>
+      )
+    } else {
+      const {postfix, statusText} = doteEventInfo[lastEventType]
+      return (
+        <div className={classNames('alert', `alert-${postfix}`)}>
+          <strong>{lastEventType}</strong>
+          <p>{statusText}</p>
+        </div>
+      )
+    }
+  }
+
   render() {
     const { bell, onClose } = this.props;
     const lastEventType = getLastBellEventType(bell.doteRequest)
-    const {postfix, statusText} = doteEventInfo[lastEventType]
 
     return (
       <div className={styles.DoteOverlayContainer}>
@@ -48,24 +83,9 @@ class DoteOverlay extends React.Component {
           </div>
           <hr/>
           <h2 className={styles.h2}>Dote Status</h2>
-            <div className={classNames('alert', `alert-${postfix}`)}>
-              <strong>{lastEventType}</strong>
-              <p>{statusText}</p>
-            </div>
-            <div className={classNames('', 'btn-group')}>
-              {this.makeButton('requested', lastEventType)}
-              {this.makeButton('onHold', lastEventType)}
-              {this.makeButton('inProgress', lastEventType)}
-              {this.makeButton('fulfilled', lastEventType)}
-            </div>
-          <hr/>
-          <h2 className={styles.h2}>Dote Note</h2>
-          <form>
-            <div className={"form-group"}>
-              <textarea className={"form-control"} rows="10"></textarea>
-            </div>
-            <button className={"btn btn-success"} type="submit">save dote note</button>
-          </form>
+            {this.makeStatus(lastEventType)}
+            {this.makeButtons(lastEventType)}
+            {lastEventType? <DoteNote /> : null}
         </div>
       </div>
     )
