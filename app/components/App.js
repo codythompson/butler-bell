@@ -37,6 +37,7 @@ class App extends React.Component {
     this.handleDoteRequestClose = this.handleDoteRequestClose.bind(this)
     this.handleCardClose = this.handleCardClose.bind(this)
     this.handleShowCard = this.handleShowCard.bind(this)
+    this.handleSaveNote = this.handleSaveNote.bind(this)
   }
 
   componentDidMount () {
@@ -52,7 +53,7 @@ class App extends React.Component {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: '{"query":"query { serverTime bells { name description doteRequest { events { type timestamp } } } }"}'
+      body: '{"query":"query { serverTime bells { name description doteRequest { notes events { type timestamp } } } }"}'
     })
       // TODO - also look at status code
       .then(res => res.json())
@@ -155,6 +156,23 @@ class App extends React.Component {
     this.setState({showAnniversaryCard: true})
   }
 
+  handleSaveNote(bellName, newNotes) {
+    this.setState({
+      pendingBells: {[bellName]: true}
+    })
+    return fetch(this.server, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: `{"query":"mutation {  doteRequestNote(bellName:"tea", notes:"so oteasdf") {    notes  }}"}`
+    })
+    .then(res => res.json())
+    .then(json => console.warn('TODO: error handling', json))
+    .then(this.requestData)
+  }
+
   render () {
     const {
       data,
@@ -175,7 +193,8 @@ class App extends React.Component {
             <DoteOverlay
               bell={activeBell}
               onEventClick={this.handleDoteEventClick}
-              onClose={this.handleDoteRequestClose} />
+              onClose={this.handleDoteRequestClose}
+              onSaveNote={this.handleSaveNote} />
           ): null}
           {activeDialogInfo !== null?(
             <Dialog

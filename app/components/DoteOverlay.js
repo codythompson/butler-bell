@@ -20,6 +20,7 @@ class DoteOverlay extends React.Component {
       inProgress: this._handleClick.bind(this, 'inProgress'),
       fulfilled: this._handleClick.bind(this, 'fulfilled')
     }
+    this.handleSaveNote = this.handleSaveNote.bind(this)
   }
 
   _handleClick(eventType) {
@@ -68,6 +69,12 @@ class DoteOverlay extends React.Component {
     }
   }
 
+  handleSaveNote(newNotes) {
+    if (this.props.onSaveNote) {
+      this.props.onSaveNote(this.props.bell.name, newNotes)
+    }
+  }
+
   render() {
     const { bell, onClose } = this.props;
     const lastEventType = getLastBellEventType(bell.doteRequest)
@@ -85,7 +92,7 @@ class DoteOverlay extends React.Component {
           <h2 className={styles.h2}>Dote Status</h2>
             {this.makeStatus(lastEventType)}
             {this.makeButtons(lastEventType)}
-            {lastEventType? <DoteNote /> : null}
+            {lastEventType? <DoteNote notes={bell.doteRequest.notes} onSaveNote={this.handleSaveNote} /> : null}
         </div>
       </div>
     )
@@ -95,7 +102,8 @@ class DoteOverlay extends React.Component {
 DoteOverlay.propTypes = {
   bell: PropTypes.object.isRequired,
   onEventClick: PropTypes.func,
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
+  onSaveNote: PropTypes.func
 }
 
 export default DoteOverlay
