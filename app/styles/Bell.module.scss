@@ -48,7 +48,6 @@
   animation-direction: alternate;
   animation-timing-function: ease-in-out;
 }
-
 .Bell.inProgress .BellImg {
   animation-name: InProgressBellAnimation;
   animation-duration: 1s;
@@ -56,9 +55,8 @@
   animation-direction: alternate;
   animation-timing-function: ease-in-out;
 }
-
-.Bell.onHold {
-  background: lightgrey;
+.Bell.onHold .BellImg {
+  transform: scale(0.9) rotate(25deg);
 }
 
 .Bell.fulfilled {
