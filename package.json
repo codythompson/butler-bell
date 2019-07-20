@@ -5,8 +5,7 @@
   "main": "app/index.js",
   "scripts": {
     "dev": "webpack-dev-server --hot --config dev.webpack.config.js",
-    "build": "webpack --mode production --config base.webpack.config.js",
-    "start": "serve"
+    "build": "webpack --mode production --config base.webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -28,7 +27,6 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "sass-loader": "^7.1.0",
-    "serve": "^11.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5",
