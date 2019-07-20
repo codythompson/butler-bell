@@ -32,6 +32,14 @@
     transform: scale(0.9) rotate(5deg);
   }
 }
+@keyframes InProgressBellAnimation {
+  from {
+    background: scale(1);
+  }
+  to {
+    transform: scale(0.95);
+  }
+}
 
 .Bell.requested .BellImg {
   animation-name: RequestedBellAnimation;
@@ -41,8 +49,12 @@
   animation-timing-function: ease-in-out;
 }
 
-.Bell.inProgress {
-  background: yellow;
+.Bell.inProgress .BellImg {
+  animation-name: InProgressBellAnimation;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-timing-function: ease-in-out;
 }
 
 .Bell.onHold {
