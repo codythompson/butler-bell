@@ -29,6 +29,8 @@ class App extends React.Component {
       showAnniversaryCard
     };
 
+    this.shouldUpdate = false;
+
     this.requestData = this.requestData.bind(this)
     this.handleBellClick = this.handleBellClick.bind(this)
     this.handleDoteEventClick = this.handleDoteEventClick.bind(this)
@@ -38,12 +40,26 @@ class App extends React.Component {
     this.handleCardClose = this.handleCardClose.bind(this)
     this.handleShowCard = this.handleShowCard.bind(this)
     this.handleSaveNote = this.handleSaveNote.bind(this)
+    this.updateData = this.updateData.bind(this);
+  }
+
+  updateData() {
+    this.requestData()
+    if (this.shouldUpdate) {
+      setTimeout(this.updateData, 5000)
+    }
+  }
+
+  componentWillUnmount() {
+    this.shouldUpdate = false;
   }
 
   componentDidMount () {
     if (this.state.data === null) {
       this.requestData();
     }
+    this.shouldUpdate = true;
+    setTimeout(this.updateData, 5000)
   }
 
   requestData () {
