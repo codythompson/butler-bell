@@ -5,23 +5,28 @@ import { getLastBellEventType } from '../Utils'
 import BellsDisplay from './BellsDisplay'
 import DoteOverlay from './DoteOverlay'
 import Dialog from './Dialog'
+import AnniversaryCard from './AnniversaryCard'
 import doteEventInfo from '../doteEventInfo.json'
 
 import styles from '../styles/App.module.scss'
 import themeStyles from '../styles/themes/themes.module.scss'
+
+const LOCAL_STORAGE_KEY_CARD_SHOWN = 'anniversaryCardShown'
 
 class App extends React.Component {
 
   constructor ({server}) {
     super();
     this.server = server;
+    const showAnniversaryCard = !(window.localStorage.getItem(LOCAL_STORAGE_KEY_CARD_SHOWN) === 'true')
     this.state = {
       errorMessage: null,
       data: null,
       pendingBells: {},
       activeBell: null,
       activeDialogInfo: null,
-      onDialogConfirm: null
+      onDialogConfirm: null,
+      showAnniversaryCard
     };
 
     this.requestData = this.requestData.bind(this)
@@ -30,6 +35,7 @@ class App extends React.Component {
     this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
     this.handleDoteRequestClose = this.handleDoteRequestClose.bind(this)
+    this.handleCardClose = this.handleCardClose.bind(this)
   }
 
   componentDidMount () {
@@ -139,13 +145,19 @@ class App extends React.Component {
     this.setState({activeBell: null})
   }
 
+  handleCardClose() {
+    window.localStorage.setItem(LOCAL_STORAGE_KEY_CARD_SHOWN, 'true');
+    this.setState({showAnniversaryCard: false})
+  }
+
   render () {
     const {
       data,
       pendingBells,
       errorMessage,
       activeBell,
-      activeDialogInfo
+      activeDialogInfo,
+      showAnniversaryCard
     } = this.state;
 
     if (errorMessage) {
@@ -169,6 +181,7 @@ class App extends React.Component {
               onCancel={this.handleDialogCancel}
               onConfirm={this.handleDialogConfirm} />
           ): null}
+          {showAnniversaryCard? <AnniversaryCard onClose={this.handleCardClose} />: null}
         </div>
       )
     } else {
