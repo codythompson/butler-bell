@@ -11,6 +11,8 @@ import doteEventInfo from '../doteEventInfo.json'
 import styles from '../styles/App.module.scss'
 import themeStyles from '../styles/themes/themes.module.scss'
 
+const UPDATE_INTERVAL = 20 * 1000;
+const REFRESH_INTERVAL = 5 * 60 * 1000;
 const LOCAL_STORAGE_KEY_CARD_SHOWN = 'anniversaryCardShown'
 
 class App extends React.Component {
@@ -30,6 +32,7 @@ class App extends React.Component {
     };
 
     this.shouldUpdate = false;
+    this.refreshTimeStampe = Date.now()
 
     this.requestData = this.requestData.bind(this)
     this.handleBellClick = this.handleBellClick.bind(this)
@@ -46,7 +49,13 @@ class App extends React.Component {
   updateData() {
     this.requestData()
     if (this.shouldUpdate) {
-      setTimeout(this.updateData, 5000)
+      if (Date.now() - this.refreshTimeStampe > REFRESH_INTERVAL) {
+        console.log('reloading!!!')
+        location.reload()
+      } else {
+        console.log('not reloading!!!')
+        setTimeout(this.updateData, UPDATE_INTERVAL)
+      }
     }
   }
 
@@ -59,7 +68,7 @@ class App extends React.Component {
       this.requestData();
     }
     this.shouldUpdate = true;
-    setTimeout(this.updateData, 5000)
+    setTimeout(this.updateData, UPDATE_INTERVAL)
   }
 
   requestData () {
