@@ -36,6 +36,7 @@ class App extends React.Component {
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
     this.handleDoteRequestClose = this.handleDoteRequestClose.bind(this)
     this.handleCardClose = this.handleCardClose.bind(this)
+    this.handleShowCard = this.handleShowCard.bind(this)
   }
 
   componentDidMount () {
@@ -150,6 +151,10 @@ class App extends React.Component {
     this.setState({showAnniversaryCard: false})
   }
 
+  handleShowCard() {
+    this.setState({showAnniversaryCard: true})
+  }
+
   render () {
     const {
       data,
@@ -165,7 +170,7 @@ class App extends React.Component {
     } else if (data !== null) {
       return (
         <div className={themeStyles.theme_princessAndThePea}>
-          <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} />
+          <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} onShowCard={this.handleShowCard} />
           {activeBell !== null? (
             <DoteOverlay
               bell={activeBell}
