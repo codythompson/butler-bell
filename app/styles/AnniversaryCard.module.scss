@@ -1,7 +1,24 @@
-.DoteOverlayContainer {
-  position: absolute;
+.AnniversaryCard {
+  position: fixed;
+  z-index: 1;
   top: 0;
   left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.Backdrop {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.8;
+  z-index: -1;
+}
+
+.OverlayContainer {
   width: 100%;
   height: 100%;
   display: flex;
@@ -10,16 +27,15 @@
 }
 
 // TODO media query for less than 400x400 instead of min-width
-.DoteOverlay {
+.Overlay {
   padding: 2% 5%;
   width: 80%;
   min-width: 400px;
+  max-height: 80%;
   box-sizing: border-box;
-  height: 80%;
-  overflow: scroll;
-  // min-height: 400px;
   border: 4px solid;
   border-radius: 16px;
+  overflow: scroll;
 }
 
 button.CloseButton {
@@ -32,8 +48,5 @@ h1.h1 {
   padding-left: 0;
 }
 
-.h2 {
-  // text-align: center;
-  font-style: italic;
-  font-weight: 700;
-}
+// .ContentContainer {
+// }

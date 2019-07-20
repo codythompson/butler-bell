@@ -5,23 +5,28 @@ import { getLastBellEventType } from '../Utils'
 import BellsDisplay from './BellsDisplay'
 import DoteOverlay from './DoteOverlay'
 import Dialog from './Dialog'
+import AnniversaryCard from './AnniversaryCard'
 import doteEventInfo from '../doteEventInfo.json'
 
 import styles from '../styles/App.module.scss'
 import themeStyles from '../styles/themes/themes.module.scss'
+
+const LOCAL_STORAGE_KEY_CARD_SHOWN = 'anniversaryCardShown'
 
 class App extends React.Component {
 
   constructor ({server}) {
     super();
     this.server = server;
+    const showAnniversaryCard = !(window.localStorage.getItem(LOCAL_STORAGE_KEY_CARD_SHOWN) === 'true')
     this.state = {
       errorMessage: null,
       data: null,
       pendingBells: {},
       activeBell: null,
       activeDialogInfo: null,
-      onDialogConfirm: null
+      onDialogConfirm: null,
+      showAnniversaryCard
     };
 
     this.requestData = this.requestData.bind(this)
@@ -30,6 +35,9 @@ class App extends React.Component {
     this.handleDialogConfirm = this.handleDialogConfirm.bind(this)
     this.handleDialogCancel = this.handleDialogCancel.bind(this)
     this.handleDoteRequestClose = this.handleDoteRequestClose.bind(this)
+    this.handleCardClose = this.handleCardClose.bind(this)
+    this.handleShowCard = this.handleShowCard.bind(this)
+    this.handleSaveNote = this.handleSaveNote.bind(this)
   }
 
   componentDidMount () {
@@ -45,7 +53,7 @@ class App extends React.Component {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: '{"query":"query { serverTime bells { name description doteRequest { events { type timestamp } } } }"}'
+      body: '{"query":"query { serverTime bells { name description doteRequest { notes events { type timestamp } } } }"}'
     })
       // TODO - also look at status code
       .then(res => res.json())
@@ -139,13 +147,40 @@ class App extends React.Component {
     this.setState({activeBell: null})
   }
 
+  handleCardClose() {
+    window.localStorage.setItem(LOCAL_STORAGE_KEY_CARD_SHOWN, 'true');
+    this.setState({showAnniversaryCard: false})
+  }
+
+  handleShowCard() {
+    this.setState({showAnniversaryCard: true})
+  }
+
+  handleSaveNote(bellName, newNotes) {
+    this.setState({
+      pendingBells: {[bellName]: true}
+    })
+    return fetch(this.server, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: `{"query":"mutation {  doteRequestNote(bellName:"tea", notes:"so oteasdf") {    notes  }}"}`
+    })
+    .then(res => res.json())
+    .then(json => console.warn('TODO: error handling', json))
+    .then(this.requestData)
+  }
+
   render () {
     const {
       data,
       pendingBells,
       errorMessage,
       activeBell,
-      activeDialogInfo
+      activeDialogInfo,
+      showAnniversaryCard
     } = this.state;
 
     if (errorMessage) {
@@ -153,12 +188,13 @@ class App extends React.Component {
     } else if (data !== null) {
       return (
         <div className={themeStyles.theme_princessAndThePea}>
-          <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} />
+          <BellsDisplay className={styles.bellsDisplay} bells={data.bells} pendingBells={pendingBells} onRing={this.handleBellClick} onShowCard={this.handleShowCard} />
           {activeBell !== null? (
             <DoteOverlay
               bell={activeBell}
               onEventClick={this.handleDoteEventClick}
-              onClose={this.handleDoteRequestClose} />
+              onClose={this.handleDoteRequestClose}
+              onSaveNote={this.handleSaveNote} />
           ): null}
           {activeDialogInfo !== null?(
             <Dialog
@@ -169,6 +205,7 @@ class App extends React.Component {
               onCancel={this.handleDialogCancel}
               onConfirm={this.handleDialogConfirm} />
           ): null}
+          {showAnniversaryCard? <AnniversaryCard onClose={this.handleCardClose} />: null}
         </div>
       )
     } else {

@@ -9,9 +9,7 @@
 - Dote Notes
   - add a quick description
   - hook up the submit button and change it's type to button
-- intro card and instructions
 - rework the bell layout
-  - probably full screen instead of 3/4
   - balance the rows
 
 ## WANT
